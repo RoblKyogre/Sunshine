@@ -22,6 +22,8 @@ namespace config {
     int av1_mode;
 
     int min_threads;  // Minimum number of threads/slices for CPU encoding
+
+    int scale_mode;    
     struct {
       std::string sw_preset;
       std::string sw_tune;

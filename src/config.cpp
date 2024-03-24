@@ -324,6 +324,8 @@ namespace config {
     0,  // av1_mode
 
     2,  // min_threads
+
+    0,  // scale_mode
     {
       "superfast"s,  // preset
       "zerolatency"s,  // tune
@@ -940,6 +942,7 @@ namespace config {
 
     int_f(vars, "qp", video.qp);
     int_f(vars, "min_threads", video.min_threads);
+    int_between_f(vars, "scale_mode", video.scale_mode, { 0, 1 });
     int_between_f(vars, "hevc_mode", video.hevc_mode, { 0, 3 });
     int_between_f(vars, "av1_mode", video.av1_mode, { 0, 3 });
     string_f(vars, "sw_preset", video.sw.sw_preset);

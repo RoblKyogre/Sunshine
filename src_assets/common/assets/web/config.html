@@ -669,6 +669,16 @@
           <div class="form-text">{{ $t('config.min_threads_desc') }}</div>
         </div>
 
+        <!-- Scale Mode -->
+        <div class="mb-3">
+          <label for="scale_mode" class="form-label">{{ $t('config.scale_mode') }}</label>
+          <select id="scale_mode" class="form-select" v-model="config.scale_mode">
+            <option value="0">{{ $t('config.scale_mode_0') }}</option>
+            <option value="1">{{ $t('config.scale_mode_1') }}</option>
+          </select>
+          <div class="form-text">{{ $t('config.scale_mode_desc') }}</div>
+        </div>
+
         <!-- HEVC Support -->
         <div class="mb-3">
           <label for="hevc_mode" class="form-label">{{ $t('config.hevc_mode') }}</label>
