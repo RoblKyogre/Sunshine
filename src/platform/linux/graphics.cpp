@@ -738,10 +738,24 @@ namespace egl {
 
     sws.serial = std::numeric_limits<std::uint64_t>::max();
 
-    // Ensure aspect ratio is maintained
-    auto scalar = std::fminf(out_width / (float) in_width, out_height / (float) in_height);
-    auto out_width_f = in_width * scalar;
-    auto out_height_f = in_height * scalar;
+    auto out_width_f = 0.0f;
+    auto out_height_f = 0.0f;
+
+    switch(scale_mode) {
+      case 0:
+        // Ensure aspect ratio is maintained
+        auto scalar = std::fminf(out_width / (float) in_width, out_height / (float) in_height);
+        out_width_f = in_width * scalar;
+        out_height_f = in_height * scalar;
+        break;
+      case 1:
+        out_width_f = out_width;
+        out_height_f = out_height;
+        break;
+      default:
+        BOOST_LOG(error) << "Invalid scale mode: "sv << scale_mode;
+        return std::nullopt;
+    }
 
     // result is always positive
     auto offsetX_f = (out_width - out_width_f) / 2;

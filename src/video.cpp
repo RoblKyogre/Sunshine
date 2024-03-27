@@ -192,16 +192,25 @@ namespace video {
         this->frame = frame;
       }
 
-      // Fill aspect ratio padding in the destination frame
-      prefill();
-
       auto out_width = frame->width;
       auto out_height = frame->height;
 
-      // Ensure aspect ratio is maintained
-      auto scalar = std::fminf((float) out_width / in_width, (float) out_height / in_height);
-      out_width = in_width * scalar;
-      out_height = in_height * scalar;
+      switch(scale_mode) { // TODO: Get scale_mode from config
+        case 0:
+          // Fill aspect ratio padding in the destination frame
+          prefill();
+          // Ensure aspect ratio is maintained
+          auto scalar = std::fminf((float) out_width / in_width, (float) out_height / in_height);
+          out_width = in_width * scalar;
+          out_height = in_height * scalar;
+          break;
+        case 1:
+          // no-op since out_width and out_height are already set
+          break;
+        default:
+          BOOST_LOG(error) << "Invalid scale mode: "sv << scale_mode;
+          return -1;
+      }
 
       sws_input_frame.reset(av_frame_alloc());
       sws_input_frame->width = in_width;

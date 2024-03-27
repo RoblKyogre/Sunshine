@@ -258,10 +258,24 @@ tex_t::~tex_t() {
 
 sws_t::sws_t(int in_width, int in_height, int out_width, int out_height, int pitch, int threadsPerBlock, ptr_t &&color_matrix)
     : threadsPerBlock { threadsPerBlock }, color_matrix { std::move(color_matrix) } {
-  // Ensure aspect ratio is maintained
-  auto scalar       = std::fminf(out_width / (float)in_width, out_height / (float)in_height);
-  auto out_width_f  = in_width * scalar;
-  auto out_height_f = in_height * scalar;
+  
+  auto scalar = 1.0f;
+  auto out_width_f = 0.0f;
+  auto out_height_f = 0.0f;
+  switch(scale_mode) { // TODO: Get scale_mode from config
+    case 0:
+      // Ensure aspect ratio is maintained
+      scalar       = std::fminf(out_width / (float)in_width, out_height / (float)in_height);
+      out_width_f  = in_width * scalar;
+      out_height_f = in_height * scalar;
+    case 1:
+      out_width_f  = out_width;
+      out_height_f = out_height;
+      break;
+    default:
+      BOOST_LOG(error) << "Invalid scale mode: "sv << scale_mode;
+      return std::nullopt;
+  }
 
   // result is always positive
   auto offsetX_f = (out_width - out_width_f) / 2;

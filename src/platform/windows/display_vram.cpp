@@ -454,10 +454,22 @@ namespace platf::dxgi {
       float in_width = display->width;
       float in_height = display->height;
 
-      // Ensure aspect ratio is maintained
-      auto scalar = std::fminf(out_width / in_width, out_height / in_height);
-      auto out_width_f = in_width * scalar;
-      auto out_height_f = in_height * scalar;
+      auto out_width_f = 0.0f;
+      auto out_height_f = 0.0f;
+
+      switch(scale_mode) { // TODO: Get scale_mode from config
+        case 0:
+          // Ensure aspect ratio is maintained
+          auto scalar = std::fminf(out_width / in_width, out_height / in_height);
+          out_width_f = in_width * scalar;
+          out_height_f = in_height * scalar;
+        case 1:
+          out_width_f = out_width;
+          out_height_f = out_height;
+        default:
+          BOOST_LOG(error) << "Invalid scale mode: "sv << scale_mode;
+          return -1;
+      }
 
       // result is always positive
       auto offsetX = (out_width - out_width_f) / 2;
