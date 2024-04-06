@@ -60,7 +60,8 @@ dnf -y install \
   pulseaudio-libs-devel \
   rpm-build \
   wget \
-  which
+  which \
+  xorg-x11-server-Xvfb
 if [[ "${TARGETPLATFORM}" == 'linux/amd64' ]]; then
   dnf -y install intel-mediasdk-devel
 fi
@@ -113,6 +114,7 @@ cmake \
   -DBUILD_WERROR=ON \
   -DCMAKE_BUILD_TYPE=Release \
   -DCMAKE_INSTALL_PREFIX=/usr \
+  -DTESTS_ENABLE_PYTHON_TESTS=OFF \
   -DSUNSHINE_ASSETS_DIR=share/sunshine \
   -DSUNSHINE_EXECUTABLE_PATH=/usr/bin/sunshine \
   -DSUNSHINE_ENABLE_WAYLAND=ON \
@@ -123,6 +125,17 @@ cmake \
 make -j "$(nproc)"
 cpack -G RPM
 _MAKE
+
+# run tests
+WORKDIR /build/sunshine/build/tests
+# hadolint ignore=SC1091
+RUN <<_TEST
+#!/bin/bash
+set -e
+export DISPLAY=:1
+Xvfb ${DISPLAY} -screen 0 1024x768x24 &
+./test_sunshine --gtest_color=yes
+_TEST
 
 FROM scratch AS artifacts
 ARG BASE
